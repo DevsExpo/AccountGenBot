@@ -33,6 +33,7 @@ bot = TelegramClient("bot", api_id=Config.API_ID, api_hash=Config.API_HASH)
 warnerstarkbot = bot.start(bot_token=Config.BOT_TOKEN)
 
 
+
 @warnerstarkbot.on(events.NewMessage(pattern="^/start$"))
 async def hmm(event):
     if Config.JTU_ENABLE:
@@ -64,14 +65,14 @@ My Commands Are As Follows:
 
 /start - To Restart Bot..!
 /cmds - To Get Help Menu
-/zee5 - To Generate Zee5 Accounts
+/generate - To Generate Zee5 Accounts
 /about - To Get Your Current Info
 
 Share And Support Us...❤️**
 """
     await event.reply(help_text)     
     
-@warnerstarkbot.on(events.NewMessage(pattern="^/(generate|gen|zee|zee5|zeeaccount|account)$"))
+@warnerstarkbot.on(events.NewMessage(pattern="^/(generate|gen|account)$"))
 async def hmm(event):
     if Config.JTU_ENABLE:
     	starky = await check_if_subbed(Config.CHANNEL_USERNAME, event, warnerstarkbot)
