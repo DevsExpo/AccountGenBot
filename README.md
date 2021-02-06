@@ -26,6 +26,7 @@ CHANNEL_USERNAME = Username Of The Channel You Wanna Check Before User Generates
 CHANNEL_URL = Url Of The Same Channel
 OWNER_ID = Your ID (Owner) Get From Any Bot.
 GEN_LIMIT_PERDAY = Limit Of account to be generated Per day , Current limit is 2 (Perday)
+```
 
 # Deploy
 [![Deploy To Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/DevsExpo/AccountGenBot/blob/main)
