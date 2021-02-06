@@ -42,7 +42,7 @@ async def hmm(event):
         	return
     st = await event.client(GetFullUserRequest(event.sender_id))
     user_text = f"""**Hello {st.user.first_name},
-Welcome To Zee5 Account Generator Bot
+Welcome To {Config.ACCOUNT_GEN_NAME} Account Generator Bot
 
 To Know About commands type:
 /cmds
