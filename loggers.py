@@ -15,24 +15,10 @@ import sys
 from pathlib import Path
 import telethon.utils
 from telethon import TelegramClient
+from Configs import Config
 
-ENV = os.environ.get("ENV", False)
-if ENV:
-    from Configs import Config
-else:
-    from local_config import Development as Config
-
-ENV = os.environ.get("ENV", False)
-if bool(ENV):
-    CONSOLE_LOGGER_VERBOSE = sb(os.environ.get("CONSOLE_LOGGER_VERBOSE", "False"))
-
-    if CONSOLE_LOGGER_VERBOSE:
-        basicConfig(
+basicConfig(
             format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
             level=DEBUG,
         )
-    else:
-        basicConfig(
-            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=INFO
-        )
-    logger = getLogger(__name__)
+logger = getLogger(__name__)
