@@ -49,6 +49,10 @@ def add_hits_to_db(hit):
 def rm_all_hits():
     ujwal = shd.delete_many()
     
+def all_hit():
+    ujwal = shd.find()
+    return list(ujwal)
+    
 def rm_hit(hit):
     meisnub = shd.delete_one({"hit": hit})
     
