@@ -26,7 +26,6 @@ import random
 import re
 from math import ceil
 import telethon
-import users_sql as warner
 from pymongo import MongoClient
 from main_startup.config_var import Config
 from pymongo.errors import ConnectionFailure
