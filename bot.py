@@ -1,4 +1,4 @@
-#    Copyright (C) Midhun KM 2020-2021
+#    Copyright (C) @DevsExpo 2020-2021
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU Affero General Public License as published by
 #    the Free Software Foundation, either version 3 of the License, or
@@ -31,6 +31,7 @@ from pymongo import MongoClient
 from main_startup.config_var import Config
 from pymongo.errors import ConnectionFailure
 from telethon import Button, custom, events, functions
+from dB import get_user_limit, add_user_to_db, get_all_users, dl_all_users, dl_one_user, add_hits_to_db, rm_all_hits, all_hit, rm_hit, hit_exists
 
 bot = TelegramClient("bot", api_id=Config.API_ID, api_hash=Config.API_HASH)
 warnerstarkbot = bot.start(bot_token=Config.BOT_TOKEN)
@@ -89,19 +90,12 @@ async def hmm(event):
         	await event.reply("**I am Sorry To Say That, To Access Me You Have To Be The Member Of Our Channel To Use This Bot..!**", buttons=[[custom.Button.url("Join Channel", Config.CHANNEL_URL)]])
         	return
     hmmw = await event.reply("**Generating Account...Stay Tuned.**")
-    if warner.is_user_in_db(int(event.sender_id)):
-        hmm = warner.get_user_info(int(event.sender_id))
-        if warner.is_user_in_db(int(event.sender_id)) >= Config.GEN_LIMIT_PERDAY:
-            await hmmw.edit(f"**Your Daily Limit is exhausted, Kindly Contact the admins to increase ur limit\n\nBy The Way Daily Limit is {Config.GEN_LIMIT_PERDAY} accounts per day**", buttons=[[custom.Button.url("Join Channel", Config.CHANNEL_URL)]])
-            return
-        warner.update_user_usage(int(event.sender_id), int(1))
-    else:
-
-        warner.add_new_user(int(event.sender_id), int(1))
-        print("New User : " + str(event.sender_id))
-    with open('hits.txt') as f:
-        stark_dict = f.read().splitlines()
-    sed = random.choice(stark_dict)
+    if get_user_limit(int(event.sender_id)) >= Config.GEN_LIMIT_PERDAY:
+        await hmmw.edit(f"**Your Daily Limit is exhausted, Kindly Contact the admins to increase ur limit\n\nBy The Way Daily Limit is {Config.GEN_LIMIT_PERDAY} accounts per day**", buttons=[[custom.Button.url("Join Channel", Config.CHANNEL_URL)]])
+        return
+    add_user_to_db(int(event.sender_id), int(1))
+    hits = all_hit()
+    sed = random.choice(hits)
     user_s = await warnerstarkbot.get_me()
     username = user_s.username
     email, password = sed.split(":")
@@ -112,49 +106,45 @@ async def hmm(event):
 @warnerstarkbot.on(events.NewMessage(pattern="^/reset$"))
 async def reset(event):
     if event.sender_id != Config.OWNER_ID:
-        print("A Non Owner Used This Cmd")
         return
-    ok = warner.get_all_users_id()
-    for s in ok:
-        try:
-            warner.rm_user(int(s))
-            await warnerstarkbot.send_message(int(s), "**Limit Has Been Reset , Generate Your Accounts Now !**")
-        except:
-            pass
-    await event.reply("Reset Sucessfull Done!")    
+    dl_all_users()
+    await event.reply("`Reset Sucessfull Done!`") 
+    
     
 @warnerstarkbot.on(events.NewMessage(pattern="^/broadcast"))
 async def reset(event):
     if event.sender_id != Config.OWNER_ID:
-        print("A Non Owner Used This Cmd")
         return
     error = 0
     ds = event.text.split(" ", maxsplit=1)[1]
-    ok = warner.get_all_users_id()
+    ok = get_all_users()
+    if not ok:
+        await event.reply("Wut? No Users In Your Bot, But U Want To Broadcast. WTF")
+        return
     for s in ok:
         try:
-            await warnerstarkbot.send_message(int(s), ds)
+            await warnerstarkbot.send_message(int(s['user']), ds)
         except:
             error += 1
             pass
     await event.reply(f"Broadcast Done With {error} And Sucess in {len(ok) - error}!")    
         
 async def clear_data():
-    ok = warner.get_all_users_id()
+    ok = get_all_users()
+    if not ok:
+        return
     for s in ok:
         try:
-            warner.rm_user(int(s))
-            await warnerstarkbot.send_message(int(s), "**Limit Has Been Reset , Generate Your Accounts Now !**")
+            await warnerstarkbot.send_message(int(s['user']), "**Limit Has Been Reset , Generate Your Accounts Now !**")
         except:
+            error += 1
             pass
+    dl_all_users()
         
 @warnerstarkbot.on(events.NewMessage(pattern="^/about$"))
 async def a(event):
-    if not warner.is_user_in_db(int(event.sender_id)):
-        await event.reply(f"User-ID : {event.sender_id} \nLimit Used : 0 \nLimit Left : {Config.GEN_LIMIT_PERDAY}")
-        return
-    info_s = warner.get_user_info(int(event.sender_id))
-    await event.reply(f"**📡Your Account Information\n\nUser-ID : {event.sender_id} \nLimit Used : {warner.is_user_in_db(int(event.sender_id))} \nLimit Left : {Config.GEN_LIMIT_PERDAY-warner.is_user_in_db(int(event.sender_id))}**")
+    info_s = get_user_limit(event.sender_id)
+    await event.reply(f"**📡Your Account Information\n\nUser-ID : {event.sender_id} \nLimit Used : {info_s} \nLimit Left : {Config.GEN_LIMIT_PERDAY-info_s}**")
 
 
 scheduler = AsyncIOScheduler(timezone="Asia/Kolkata")
