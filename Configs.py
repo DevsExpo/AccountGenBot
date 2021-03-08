@@ -3,8 +3,7 @@ import os
 
 class Config(object):
     BOT_TOKEN = os.environ.get("BOT_TOKEN", None)
-    DB_URI = os.environ.get("DATABASE_URL", None)
-    MG_DB_URL = os.environ.get("MG_URL", None)
+    MONGO_DB = os.environ.get("MONGO_DB", None)
     API_HASH = os.environ.get("API_HASH", "hfcdgv3656hshs")
     API_ID = int(os.environ.get("API_ID", 6))
     ACCOUNT_GEN_NAME = os.environ.get("ACCOUNT_GEN_NAME", "Alt-Balaji")
