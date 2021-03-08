@@ -41,6 +41,12 @@ def get_all_users():
     else:
         return None
     
+def dl_all_users():
+    ujwal = sud.delete_many()
+    
+def dl_one_user(user):
+    ujwal = sud.delete_one({'user': user})
+    
 def add_hits_to_db(hit):
     ujwal = shd.find_one({"hit": hit})
     if not ujwal:
